@@ -1,7 +1,7 @@
 const { SMTPServer } = require("smtp-server");
 
 const server = new SMTPServer({
-    sesure: false,
+    authOptional: true,
     onConnect(session, callback){
         console.log("Client Connected", session.id);
         callback();
@@ -13,8 +13,11 @@ const server = new SMTPServer({
     onRcptTo(address,session,callback){
         console.log("Recipient To:", address.address, session.id);
         callback();
+    },
+    onData(stream, session, callback){
+        console.log("Data Stream Received from", session.id);
+        stream.on('data', (data)=>{console.log("onData:",data.toString())});
     }
-    
 });
 
 server.on("error", (err)=>{
